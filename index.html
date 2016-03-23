@@ -5,15 +5,16 @@
     <title>Logan Martin Neighborhood Map</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="CSS/bootstrap.min.css">
+    <link rel="stylesheet" href="CSS/style.css">
 
 
   </head>
   <body>
   <div class = "container">
+   <div class = "row">
 
-      <div class= "col-xs-2 text align-left"
+      <div class= "col-md-2 text align-left"
         <h3>Places</h3>
          <ul id ="places">
            <li>Clear Creek</li>
@@ -24,12 +25,13 @@
 </div>
 
 
-    <div class = "col-md-8">
+    <div class = "col-md-10">
     <div id="map"></div>
       </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBO7zaTpALyiQJOvnvA7_muATPumXQT2uU&callback=initMap"
     async defer></script>
+    <script src="js/lib/jquery.min.js"></script>
   </body>
 </html>
 
