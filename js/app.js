@@ -3,18 +3,14 @@
      //Global map variable
 
 
-var ViewModel = function() {
-    var self = this;
-    this.markerList = ko.observableArray([]);
 
-        };
 
 
 
 var siteAddress = [
   {
     name: "The Back Porch Grill",
-   address: "270 Marina Drive, Talladega, AL 35160"
+    address: "270 Marina Drive, Talladega, AL 35160"
   },
   {
     name: "Chilly Williys",
@@ -24,37 +20,84 @@ var siteAddress = [
    {
     name: "Pam and Mike's",
     address: "780 River Oaks Drive, Cropwell, Al"
-   }
-];
+   },
+   {
+    name: "Pier 59",
+    address: "1366 Rivercrest Dr"
+  },
+  {
+    name: "The Ark",
+    address:  "Riverside, Al 35135"
+  }
+]
+
+var Place = function(data) {
+    this.name = ko.observable(data.name);
+    this.address = ko.observable(data.address);
+    console.log(this.name);
+}
 
 
-var initMap = function() {
+//Load Initial Map Object
+var initMap = function(data) {
+
     var map;
-    var elevator;
-    var myOptions = {
-        zoom: 13,
-        center: new google.maps.LatLng(33.531254, -86.290179),
+    var myMap = {
+        zoom: 12,
+        center: new google.maps.LatLng(33.474614, -86.252804),
         mapTypeId: 'terrain'
     };
-    map = new google.maps.Map($('#map')[0], myOptions);
 
+     infowindow = new google.maps.InfoWindow ({
+      content: "None"
+     });
+    map = new google.maps.Map($('#map')[0], myMap);
+
+     //Use GeoCoding to get the LatLng
     siteAddress.forEach(function(marker) {
         $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + marker.address + "&key=AIzaSyAB7BN8tkg05jkP4fsGts_jxQw_EPPrEW0",
          function (data) {
             var p = data.results[0].geometry.location
             var latlng = new google.maps.LatLng(p.lat, p.lng);
-            new google.maps.Marker({
+
+                marker = new google.maps.Marker({
                 position: latlng,
                 map: map,
+                address: marker.address,
+                title: marker.name,
+                contentString: marker.name,
                 icon: "img/boating.svg"
+
             });
 
-        });
-    })
-
-};
+  console.log(siteAddress[0].name);
 
 
+            google.maps.event.addListener(marker, "click", function () {
+
+                infowindow.open(map, this);
+                infowindow.setContent(this.contentString);
+
+            });
+         })
+      })
+  }
+
+
+
+
+
+var ViewModel = function() {
+    var self = this;
+       //makes a reference for the list of places for the html
+    this.placeList = ko.observableArray([]);
+
+    siteAddress.forEach(function(placeItem) {
+           self.placeList.push( new Place(placeItem) );
+           console.log(placeItem);
+    });
+
+        };
 
 ko.applyBindings(new ViewModel());
 

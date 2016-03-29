@@ -16,12 +16,9 @@
 
       <div class= "col-md-2 text align-left"
         <h3>Places</h3>
-         <ul id ="places">
-           <li>Clear Creek</li>
-           <li> Mountains</li>
-           <li>Chilly Willys</li>
+        <ul data-bind = "foreach:placeList">
+        <li data-bind = "text:name, click: $parent.illuminMarker"> </li>
           </ul>
-
 </div>
 
 
