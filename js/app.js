@@ -2,7 +2,8 @@
 //GeoSync Key  AIzaSyAB7BN8tkg05jkP4fsGts_jxQw_EPPrEW0
      //Global map variable
 
-
+//FourSquare Client id UDAIBO0KLAVZAXOV1QCFE5WMROTWBLH5EVIGT1YT4QE5GBZI
+//Client secret UN3EV2ASZGLNVNKEUSMUNMRLA2WDOZVC1SSWD33SUESQ1FFT
 
 
 
@@ -17,10 +18,7 @@ var siteAddress = [
     address: "4300 Martin St S, Cropwell, AL 35054"
 
    },
-   {
-    name: "Pam and Mike's",
-    address: "780 River Oaks Drive, Cropwell, Al"
-   },
+
    {
     name: "Pier 59",
     address: "1366 Rivercrest Dr"
@@ -28,6 +26,14 @@ var siteAddress = [
   {
     name: "The Ark",
     address:  "Riverside, Al 35135"
+  },
+  {
+    name: "Fat Man's BBQ",
+    address: "10179 US Hwy 231, Cropwell, AL 35054"
+  },
+   {
+    name: "Pell City Coffee Company",
+    address: "1605 Martin St S, Pell City, AL 35128"
   }
 ]
 var map;
@@ -84,8 +90,17 @@ var initMap = function(data) {
             });
          })
       })
-  }
 
+siteAddress.forEach(function(marker) {
+     $.ajax({
+      url: 'https://api.foursquare.com/v2/venues/explore',
+      dataType: 'json',
+      data: 'limit=7&ll='+marker.name+'&client_id=UDAIBO0KLAVZAXOV1QCFE5WMROTWBLH5EVIGT1YT4QE5GBZI&client_secret=UN3EV2ASZGLNVNKEUSMUNMRLA2WDOZVC1SSWD33SUESQ1FFT',
+      async: false,
+      success: getVenues
+});
+  })
+ }
 
 var ViewModel = function() {
     var self = this;
@@ -94,10 +109,10 @@ var ViewModel = function() {
 
     siteAddress.forEach(function(placeItem) {
            self.placeList.push( new Place(placeItem) );
-           //console.log(placeItem);
+           console.log(placeItem);
          });
 
-    self.showInfo = function (placeItem) {
+    self.showWindow = function (placeItem) {
         google.maps.event.trigger(placeItem.marker, 'click');
         self.hideElements();
     };
