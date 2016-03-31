@@ -30,6 +30,7 @@ var siteAddress = [
     address:  "Riverside, Al 35135"
   }
 ]
+var map;
 
 var Place = function(data) {
     this.name = ko.observable(data.name);
@@ -41,8 +42,8 @@ var Place = function(data) {
 //Load Initial Map Object
 var initMap = function(data) {
 
-    var map;
-    var myMap = {
+
+    map = {
         zoom: 12,
         center: new google.maps.LatLng(33.474614, -86.252804),
         mapTypeId: 'terrain'
@@ -51,7 +52,7 @@ var initMap = function(data) {
      infowindow = new google.maps.InfoWindow ({
       content: "None"
      });
-    map = new google.maps.Map($('#map')[0], myMap);
+    map = new google.maps.Map($('#map')[0], map);
 
      //Use GeoCoding to get the LatLng
     siteAddress.forEach(function(marker) {
@@ -66,25 +67,24 @@ var initMap = function(data) {
                 address: marker.address,
                 title: marker.name,
                 contentString: marker.name,
+                animation: google.maps.Animation.DROP,
                 icon: "img/boating.svg"
 
             });
 
-  console.log(siteAddress[0].name);
+  //console.log(siteAddress[0].name);
 
 
-            google.maps.event.addListener(marker, "click", function () {
+               google.maps.event.addListener(marker, "click", function () {
 
                 infowindow.open(map, this);
                 infowindow.setContent(this.contentString);
+                this.marker = marker;
 
             });
          })
       })
   }
-
-
-
 
 
 var ViewModel = function() {
@@ -94,10 +94,19 @@ var ViewModel = function() {
 
     siteAddress.forEach(function(placeItem) {
            self.placeList.push( new Place(placeItem) );
-           console.log(placeItem);
-    });
+           //console.log(placeItem);
+         });
 
-        };
+    self.showInfo = function (placeItem) {
+        google.maps.event.trigger(placeItem.marker, 'click');
+        self.hideElements();
+    };
+
+
+       }; //viewModel
+
+
+
 
 ko.applyBindings(new ViewModel());
 
