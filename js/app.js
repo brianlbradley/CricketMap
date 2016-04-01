@@ -36,11 +36,14 @@ var siteAddress = [
     address: "1605 Martin St S, Pell City, AL 35128"
   }
 ]
+
 var map;
 
 var Place = function(data) {
     this.name = ko.observable(data.name);
     this.address = ko.observable(data.address);
+    this.marker = ko.observable();
+    this.contentString = ko.observable('');
     console.log(this.name);
 }
 
@@ -55,43 +58,10 @@ var initMap = function(data) {
         mapTypeId: 'terrain'
     };
 
-     infowindow = new google.maps.InfoWindow ({
-      content: "None"
-     });
-    map = new google.maps.Map($('#map')[0], map);
-
-     //Use GeoCoding to get the LatLng
-    siteAddress.forEach(function(marker) {
-        $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + marker.address + "&key=AIzaSyAB7BN8tkg05jkP4fsGts_jxQw_EPPrEW0",
-         function (data) {
-            var p = data.results[0].geometry.location
-            var latlng = new google.maps.LatLng(p.lat, p.lng);
-
-                marker = new google.maps.Marker({
-                position: latlng,
-                map: map,
-                address: marker.address,
-                title: marker.name,
-                contentString: marker.name,
-                animation: google.maps.Animation.DROP,
-                icon: "img/boating.svg"
-
-            });
-
-  //console.log(siteAddress[0].name);
 
 
-               google.maps.event.addListener(marker, "click", function () {
 
-                infowindow.open(map, this);
-                infowindow.setContent(this.contentString);
-                this.marker = marker;
-
-            });
-         })
-      })
-
-siteAddress.forEach(function(marker) {
+/*siteAddress.forEach(function(marker) {
      $.ajax({
       url: 'https://api.foursquare.com/v2/venues/explore',
       dataType: 'json',
@@ -99,31 +69,77 @@ siteAddress.forEach(function(marker) {
       async: false,
       success: getVenues
 });
-  })
- }
+  })*/
+ko.applyBindings(new ViewModel());
+
+}
 
 var ViewModel = function() {
     var self = this;
        //makes a reference for the list of places for the html
     this.placeList = ko.observableArray([]);
 
+
     siteAddress.forEach(function(placeItem) {
            self.placeList.push( new Place(placeItem) );
            console.log(placeItem);
          });
 
-    self.showWindow = function (placeItem) {
-        google.maps.event.trigger(placeItem.marker, 'click');
-        self.hideElements();
+
+
+
+
+     map = new google.maps.Map($('#map')[0], map);
+     var marker;
+
+     //Use GeoCoding to get the LatLng
+    siteAddress.forEach(function(placeItem) {
+        $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + placeItem.address + "&key=AIzaSyAB7BN8tkg05jkP4fsGts_jxQw_EPPrEW0",
+         function (data) {
+            var p = data.results[0].geometry.location
+            var latlng = new google.maps.LatLng(p.lat, p.lng);
+
+                marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                address: placeItem.address,
+                title: placeItem.name,
+                contentString: placeItem.name,
+                animation: google.maps.Animation.DROP,
+                icon: "img/boating.svg"
+
+            });
+              placeItem.marker = marker;
+              console.log(placeItem.marker);
+
+  //console.log(siteAddress[0].name);
+
+                  google.maps.event.addListener(marker, "click", function () {
+                  infowindow.open(map, this);
+                  infowindow.setContent(this.contentString);
+
+
+            });
+
+         self.showWindows = function (placeItem) {
+         google.maps.event.trigger(placeItem.marker, 'click')
+
+
+
     };
 
+         })
+      })
+     infowindow = new google.maps.InfoWindow ({
+     content: "None"
+     });
 
        }; //viewModel
 
 
 
 
-ko.applyBindings(new ViewModel());
+
 
 
 
