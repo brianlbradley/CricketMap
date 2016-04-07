@@ -5,18 +5,18 @@
 //FourSquare Client id UDAIBO0KLAVZAXOV1QCFE5WMROTWBLH5EVIGT1YT4QE5GBZI
 //Client secret UN3EV2ASZGLNVNKEUSMUNMRLA2WDOZVC1SSWD33SUESQ1FFT
 
+//  https://api.foursquare.com/v2/venues/' + '?client_id=UDAIBO0KLAVZAXOV1QCFE5WMROTWBLH5EVIGT1YT4QE5GBZI&client_secret=UN3EV2ASZGLNVNKEUSMUNMRLA2WDOZVC1SSWD33SUESQ1FFT=20160404
 
 
 
 var siteAddress = [
   {
-    name: "The Back Porch Grill",
+    name: "Willow Grill-Clear Creek Marina",
     address: "270 Marina Drive, Talladega, AL 35160"
   },
   {
-    name: "Chilly Williys",
+    name: "Chilly Willy's",
     address: "4300 Martin St S, Cropwell, AL 35054"
-
    },
 
    {
@@ -42,9 +42,12 @@ var map;
 var Place = function(data) {
     this.name = ko.observable(data.name);
     this.address = ko.observable(data.address);
-    this.marker = ko.observable();
-    this.contentString = ko.observable('');
-    console.log(this.name);
+    //this.rating = ko.observable(data.rating);
+ //   console.log(this.rating);
+   // this.contentString = ko.observable('');
+    //this.latlng = ko.observable(data.latlng);
+   // this.LatLng = ko.observable(data.LatLng);
+   // console.log(this.marker);
 }
 
 
@@ -60,17 +63,9 @@ var initMap = function(data) {
 
 
 
+//Loading ViewModel after initMap is created becasue of map errors. Credit Heidi Kassimer coach for this tip.
 
-/*siteAddress.forEach(function(marker) {
-     $.ajax({
-      url: 'https://api.foursquare.com/v2/venues/explore',
-      dataType: 'json',
-      data: 'limit=7&ll='+marker.name+'&client_id=UDAIBO0KLAVZAXOV1QCFE5WMROTWBLH5EVIGT1YT4QE5GBZI&client_secret=UN3EV2ASZGLNVNKEUSMUNMRLA2WDOZVC1SSWD33SUESQ1FFT',
-      async: false,
-      success: getVenues
-});
-  })*/
-ko.applyBindings(new ViewModel());
+   ko.applyBindings(new ViewModel());
 
 }
 
@@ -79,60 +74,131 @@ var ViewModel = function() {
        //makes a reference for the list of places for the html
     this.placeList = ko.observableArray([]);
 
-
+      // Adds the listItems (name and address)
     siteAddress.forEach(function(placeItem) {
            self.placeList.push( new Place(placeItem) );
            console.log(placeItem);
          });
 
 
-
-
-
      map = new google.maps.Map($('#map')[0], map);
      var marker;
 
-     //Use GeoCoding to get the LatLng
-    siteAddress.forEach(function(placeItem) {
-        $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + placeItem.address + "&key=AIzaSyAB7BN8tkg05jkP4fsGts_jxQw_EPPrEW0",
+     //Use GeoCoding to get the LatLng-thought it was better than having to type in Lat's and Long's in the data model.
+    self.placeList().forEach(function(placeItem) {
+        $.getJSON('https://maps.googleapis.com/maps/api/geocode/json?address=' + placeItem.address() + "&key=AIzaSyAB7BN8tkg05jkP4fsGts_jxQw_EPPrEW0",
          function (data) {
             var p = data.results[0].geometry.location
-            var latlng = new google.maps.LatLng(p.lat, p.lng);
+            var latitude = p.lat;
+            var longitude = p.lng;
+            var contentString = '<div> <h4>' +placeItem.name()+'</h4> </div>'; //Doesn't recognize components of FourSquare e.g. placeItem.rating
 
+            var latlng = new google.maps.LatLng(p.lat, p.lng);
                 marker = new google.maps.Marker({
                 position: latlng,
                 map: map,
-                address: placeItem.address,
-                title: placeItem.name,
-                contentString: placeItem.name,
+                address: placeItem.address(),
+                title: placeItem.name(),
+                contentString: contentString,
                 animation: google.maps.Animation.DROP,
                 icon: "img/boating.svg"
 
-            });
-              placeItem.marker = marker;
-              console.log(placeItem.marker);
+                                               });
 
-  //console.log(siteAddress[0].name);
+console.log(placeItem);
 
-                  google.maps.event.addListener(marker, "click", function () {
+
+      self.placeList().forEach(function(placeItem) {
+
+             //Code adapted from https://github.com/joannawicz/Paradise-city
+        var results, canonicalUrl,rating,status
+       $.ajax({
+      url: 'https://api.foursquare.com/v2/venues/explore',
+      type: 'GET',
+      dataType: 'json',
+
+      data: {
+          client_id: 'UDAIBO0KLAVZAXOV1QCFE5WMROTWBLH5EVIGT1YT4QE5GBZI',
+          client_secret: 'UN3EV2ASZGLNVNKEUSMUNMRLA2WDOZVC1SSWD33SUESQ1FFT',
+          v: '20160407',
+          limit: 1,
+          ll: latitude + ',' + longitude,
+          query: placeItem.name(),
+          async: true
+          //limit: 8,
+          //radius: 10000,
+          //sortByDistance: 1,
+          // openNow: true,
+
+            },
+
+         // Credit for the hasOwnProperty https://discussions.udacity.com/t/foursquare-results-undefined-until-the-second-click-on-infowindow/39673/9
+
+/*var contact = venue.hasOwnProperty('contact') ? venue.contact : '';
+
+if (contact.hasOwnProperty('formattedPhone')) {
+    placeItem.phone(contact.formattedPhone || '');
+}
+*/
+     success: function(results) {
+      //console.log(results);
+      results = results.response.groups[0].items[0];
+      //result = respsonse.groups[0].items;
+      //placeItem.url = results.url;
+        placeItem.text =results.tips[0].text;
+       placeItem.canonicalUrl =results.tips[0].canonicalUrl;
+       placeItem.rating = results.venue.rating;
+       placeItem.phone = results.venue.contact.formattedPhone;
+      // console.log(placeItem.phone)
+      //placeItem.status = results.hours["status"];
+      // placeItem.name = results.name;
+      // console.log(placeItem.rating)
+      // console.log(placeItem.url)
+      // console.log(placeItem.canonicalUrl) //undefined
+      //  console.log(placeItem.status)
+
+
+    } // End of success
+
+   }) //End Ajax
+
+ })       // End of function
+
+
+                 //console.log(placeItem);
+
+
+               //reference for the showWindows function
+               placeItem.marker = marker;
+               // console.log(placeItem.marker);
+
+               infowindow = new google.maps.InfoWindow ({
+               content: 'none',
+               maxWidth:200
+
+
+             });
+
+     //console.log(siteAddress[0].name);
+                 //Relates the appropriate name with marker
+                  google.maps.event.addListener(placeItem.marker, "click", function () {
                   infowindow.open(map, this);
-                  infowindow.setContent(this.contentString);
+                  infowindow.setContent(this.contentString+'<div> <h4> Rating:'+placeItem.rating +'</h4><h4> Call Us:' +placeItem.phone+ '</h4><p>' + placeItem.text+ '</p><p><a href=' +placeItem.canonicalUrl+ '>FourSquare</a></p></div>');
+                 // console.log(placeItem.marker);
 
 
             });
 
-         self.showWindows = function (placeItem) {
-         google.maps.event.trigger(placeItem.marker, 'click')
 
+          })
 
+         });
+                 //infoWindow bound to the list items
+                 self.showWindows = function (placeItem) {  //this recognizes GeoCoding and AJAX
+                 //console.log(placeItem);
+                 google.maps.event.trigger(placeItem.marker, 'click')
+      }
 
-    };
-
-         })
-      })
-     infowindow = new google.maps.InfoWindow ({
-     content: "None"
-     });
 
        }; //viewModel
 
