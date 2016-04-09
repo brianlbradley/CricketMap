@@ -91,7 +91,7 @@ var ViewModel = function() {
             var p = data.results[0].geometry.location
             var latitude = p.lat;
             var longitude = p.lng;
-            var contentString = '<div> <h4>' +placeItem.name()+'</h4> </div>'; //Doesn't recognize components of FourSquare e.g. placeItem.rating
+            var contentString = '<div class = infohead> <h3>' +placeItem.name()+'</h3> </div>'; //Doesn't recognize components of FourSquare e.g. placeItem.rating
 
             var latlng = new google.maps.LatLng(p.lat, p.lng);
                 marker = new google.maps.Marker({
@@ -183,7 +183,7 @@ if (contact.hasOwnProperty('formattedPhone')) {
                  //Relates the appropriate name with marker
                   google.maps.event.addListener(placeItem.marker, "click", function () {
                   infowindow.open(map, this);
-                  infowindow.setContent(this.contentString+'<div> <h4> Rating:'+placeItem.rating +'</h4><h4> Call Us:' +placeItem.phone+ '</h4><p>' + placeItem.text+ '</p><p><a href=' +placeItem.canonicalUrl+ '>FourSquare</a></p></div>');
+                  infowindow.setContent(this.contentString+'<div> <p class = rating> Rating:'+placeItem.rating +'</p><h4> Call Us:' +placeItem.phone+ '</h4><p class = infobody>' + placeItem.text+ '</p><p class = canonical><a href=' +placeItem.canonicalUrl+ '>FourSquare</a></p></div>');
                  // console.log(placeItem.marker);
 
 

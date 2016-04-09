@@ -8,21 +8,27 @@
     <link rel="stylesheet" href="CSS/bootstrap.min.css">
     <link rel="stylesheet" href="CSS/style.css">
 
-
   </head>
   <body>
   <div class = "container">
    <div class = "row">
 
-      <div class= "col-md-2 text align-left"
-        <h3>Places</h3>
+      <div class= "heading col-md-3  text align-left"
+        <h3>Lake Spots</h3>
+        <br>
+        <br>
         <ul data-bind = "foreach:placeList">
         <li data-bind = "text:name, click: $parent.showWindows"> </li>
           </ul>
+          <br>
+          <br>
+          <br>
+       <img src = "img/lakepic3.jpg" class = "lake" alt ="Lake Pic" width="350" height="325">
+
 </div>
 
 
-    <div class = "col-md-10">
+    <div class = "col-md-7">
     <div id="map"></div>
       </div>
 

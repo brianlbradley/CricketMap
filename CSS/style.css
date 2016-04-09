@@ -1,18 +1,55 @@
  html, body {
         height: 100%;
-        margin: 0;
+        margin: 0px;
         padding: 0;
+        padding-top: 10px;
+       background-image: url("img/lakepic2.jpg");
+       background-color: lightblue;
       }
 
-   #map {
+#map {
   display: block;
   height: 100%;
-  margin-left: 0%;
+  margin-left: 5%;
   margin-right: 0%;
 }
 
 #map {
   height: 1000px;
-  width: 100%;
+  width: 105%;
   padding-bottom: 5%;
+}
+.heading  {
+
+          height: 350px;
+          width: 375px;
+          font:25px bold;
+          text-align: center;
+          color: grey;
+          background-color:black;
+
+        }
+.infohead {
+  color: red;
+  font-weight: bold;
+}
+.infobody {
+  font-size: 16;
+  font-family: sans-serif;
+}
+p {
+  color: grey;
+  font-size: 14px;
+  font-family: sans-serif;
+  font-weight: bolder;
+}
+.canonical {
+
+  font-size: 18px;
+  font-family: sans-serif;
+  font-weight: bolder;
+}
+.rating {
+  color: green;
+  font-size: 16px;
 }
