@@ -13,23 +13,24 @@
   <div class = "container">
    <div class = "row">
 
-      <div class= "heading col-md-3  text align-left"
-        <h3>Lake Spots</h3>
-        <br>
-        <br>
-        <ul data-bind = "foreach:placeList">
-        <li data-bind = "text:name, click: $parent.showWindows"> </li>
-          </ul>
-          <br>
-          <br>
-          <br>
-       <img src = "img/lakepic3.jpg" class = "lake" alt ="Lake Pic" width="350" height="325">
+      <div class= "heading col-md-3  text align-left">
+        <fieldset>
+       <h1 class ="title">Lake Spots</h1>
+       <input type ="search"  data-bind = "textInput: userInput, event: {keyup: filterMarkers}">
+       <ul id = "list-view" data-bind = "foreach: visiblePlaces">
+      <li data-bind = "text:name, click: $parent.showWindows"> </li>
 
-</div>
+      </fieldset>
+          </ul>
+
+          <br>
+       <img src = "img/lakepic3.jpg" class = "lake" alt ="Lake Pic" width="350" height="300">
+
+        </div>
 
 
     <div class = "col-md-7">
-    <div id="map"></div>
+    <div id="map"style="width:800px;height:800px;"></div>
       </div>
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBO7zaTpALyiQJOvnvA7_muATPumXQT2uU&callback=initMap"

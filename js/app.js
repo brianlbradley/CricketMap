@@ -34,7 +34,20 @@ var siteAddress = [
    {
     name: "Pell City Coffee Company",
     address: "1605 Martin St S, Pell City, AL 35128"
+  },
+  { name: "Stemley Station Restaurant",
+    address: "7421 Stemley Bridge Rd, Talladega, AL 35160"
+
+  },
+   { name: "The Shack",
+    address: "7744 Stemley Bridge Rd, Talladega, AL 35160"
+
+  },
+  { name: "Montana Saloon",
+    address: "75023 Hwy 77, Lincoln, AL 35096"
+
   }
+
 ]
 
 var map;
@@ -58,7 +71,7 @@ var initMap = function(data) {
     map = {
         zoom: 12,
         center: new google.maps.LatLng(33.474614, -86.252804),
-        mapTypeId: 'terrain'
+        mapTypeId: 'roadmap'
     };
 
 
@@ -74,7 +87,7 @@ var ViewModel = function() {
        //makes a reference for the list of places for the html
     this.placeList = ko.observableArray([]);
 
-      // Adds the listItems (name and address)
+      // Adds the listItems (name and address) Code adapted from Ben Jaffe's CatClickers tutorial
     siteAddress.forEach(function(placeItem) {
            self.placeList.push( new Place(placeItem) );
            console.log(placeItem);
@@ -132,7 +145,7 @@ console.log(placeItem);
 
             },
 
-         // Credit for the hasOwnProperty https://discussions.udacity.com/t/foursquare-results-undefined-until-the-second-click-on-infowindow/39673/9
+ // Credit for the hasOwnProperty https://discussions.udacity.com/t/foursquare-results-undefined-until-the-second-click-on-infowindow/39673/9
 
 /*var contact = venue.hasOwnProperty('contact') ? venue.contact : '';
 
@@ -145,7 +158,7 @@ if (contact.hasOwnProperty('formattedPhone')) {
       results = results.response.groups[0].items[0];
       //result = respsonse.groups[0].items;
       //placeItem.url = results.url;
-        placeItem.text =results.tips[0].text;
+       placeItem.text =results.tips[0].text;
        placeItem.canonicalUrl =results.tips[0].canonicalUrl;
        placeItem.rating = results.venue.rating;
        placeItem.phone = results.venue.contact.formattedPhone;
@@ -183,7 +196,8 @@ if (contact.hasOwnProperty('formattedPhone')) {
                  //Relates the appropriate name with marker
                   google.maps.event.addListener(placeItem.marker, "click", function () {
                   infowindow.open(map, this);
-                  infowindow.setContent(this.contentString+'<div> <p class = rating> Rating:'+placeItem.rating +'</p><h4> Call Us:' +placeItem.phone+ '</h4><p class = infobody>' + placeItem.text+ '</p><p class = canonical><a href=' +placeItem.canonicalUrl+ '>FourSquare</a></p></div>');
+                  infowindow.setContent(this.contentString+'<div> <p class = rating> Rating:'+placeItem.rating +'</p><h4> Phone:' +placeItem.phone+ '</h4><p class = infobody>' + placeItem.text+ '</p><p class = canonical><a href=' +placeItem.canonicalUrl+ '>FourSquare</a></p></div>');
+                  placeItem.marker.setAnimation(google.maps.Animation.BOUNCE);
                  // console.log(placeItem.marker);
 
 
@@ -198,6 +212,39 @@ if (contact.hasOwnProperty('formattedPhone')) {
                  //console.log(placeItem);
                  google.maps.event.trigger(placeItem.marker, 'click')
       }
+        // *****Filter Section***** Code adapted from http://codepen.io/prather-mcs/pen/KpjbNN?editors=001
+
+        //All markers visible based on user input until filtered out by input
+
+        self.visiblePlaces = ko.observableArray();
+
+        self.placeList().forEach(function(place) {
+        self.visiblePlaces.push(place);
+      });
+         //keeps track of user input with data-bind
+        self.userInput = ko.observable('');
+
+      // Looks at the names of the places the Markers stand for
+      // and look at the user input in the search box.  If the user input
+      //can befound in the place name, the place stays visible and
+      //all other markers are removed
+      self.filterMarkers = function() {
+        var searchInput = self.userInput().toLowerCase();
+        self.visiblePlaces.removeAll();
+        self.placeList().forEach(function(place) {
+        place.marker.setVisible(false);
+          if (place.name().toLowerCase().indexOf(searchInput) !== -1) {
+             self.visiblePlaces .push(place);
+          }
+
+          });
+        self.visiblePlaces().forEach(function(place) {
+          place.marker.setVisible(true);
+        });
+
+
+        }
+
 
 
        }; //viewModel
