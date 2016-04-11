@@ -145,14 +145,7 @@ console.log(placeItem);
 
             },
 
- // Credit for the hasOwnProperty https://discussions.udacity.com/t/foursquare-results-undefined-until-the-second-click-on-infowindow/39673/9
 
-/*var contact = venue.hasOwnProperty('contact') ? venue.contact : '';
-
-if (contact.hasOwnProperty('formattedPhone')) {
-    placeItem.phone(contact.formattedPhone || '');
-}
-*/
      success: function(results) {
       //console.log(results);
       results = results.response.groups[0].items[0];
